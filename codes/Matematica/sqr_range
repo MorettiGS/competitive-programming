@@ -1,0 +1,35 @@
+int main(){
+  ios; 
+  int n, q; cin >> n >> q; 
+  int raiz = (int) sqrt(n + .0) + 1; 
+  vector<int> xs(raiz, 1e9); 
+  vector<int> first; 
+  for(int i=0; i<n; i++){
+    int a; cin >> a;
+    first.push_back(a); 
+    xs[i/raiz] = min(a, xs[i/raiz]); 
+  }
+ 
+//  for(auto i: xs)
+  //  cout << i << " "; 
+  cout << endl; 
+  while(q--){
+  int res = 1e9; 
+    int l, r; 
+    cin >> l >> r; 
+    l--; r--; 
+    for(int i=l; i<=r; i++){
+      //cout << i << endl;
+      if(i%raiz == 0 and r >= i+ raiz -1){
+        res = min(res, xs[i/raiz]); 
+        i+=raiz; 
+      }
+      else{
+        res=min(res, first[i]);  
+      }
+ 
+    }
+  cout << res << endl;
+  }
+}
+
