@@ -1,109 +1,118 @@
-// typedef ll cod;
-// bool eq(cod a, cod b){ return (a==b); }
+template<typename T>
+struct Point3D { T x, y, z; };
 
-const ld EPS = 1e-6;
-#define vp vector<point>
-typedef ld cod;
-bool eq(cod a, cod b){ return fabs(a - b) <= EPS; }
+template<typename T>
+struct Sphere {
+    Point3D<T> C;
+    T r;
 
-struct point
-{
-    cod x, y, z;
-    point(cod x=0, cod y=0, cod z=0): x(x), y(y), z(z) {}
+    double area() const
+    {
+        return 4.0*PI*r*r;
+    }
 
-    point operator+(const point &o) const {
-        return {x+o.x, y+o.y, z+o.z};
-    }
-    point operator-(const point &o) const {
-        return {x-o.x, y-o.y, z-o.z};
-    }
-    point operator*(cod t) const {
-        return {x*t, y*t, z*t};
-    }
-    point operator/(cod t) const {
-        return {x/t, y/t, z/t};
-    }
-    bool operator==(const point &o) const {
-        return eq(x, o.x) and eq(y, o.y) and eq(z, o.z);
-    }
-    cod operator*(const point &o) const { // dot
-        return x*o.x + y*o.y + z*o.z;
-    }
-    point operator^(const point &o) const { // cross
-        return point(y*o.z - z*o.y,
-                     z*o.x - x*o.z,
-                     x*o.y - y*o.x);
+    double volume() const
+    {
+        return 4.0*PI*r*r*r/3.0;
     }
 };
 
-ld norm(point a) { // Modulo
-    return sqrt(a * a);
-}
-cod norm2(point a) {
-    return a * a;
-}
-bool nulo(point a) {
-    return (eq(a.x, 0) and eq(a.y, 0) and eq(a.z, 0));
-}
-ld proj(point a, point b) { // a sobre b
-    return (a*b)/norm(b);
-}
-ld angle(point a, point b) { // em radianos
-    return acos((a*b) / norm(a) / norm(b));
-}
+template<typename T>
+struct Cylinder {
+    T r, h;
 
-cod triple(point a, point b, point c) {
-    return (a * (b^c)); // Area do paralelepipedo
-}
-
-point normilize(point a) {
-    return a/norm(a);
-}
-
-struct plane {
-    cod a, b, c, d;
-    point p1, p2, p3;
-    plane(point p1=0, point p2=0, point p3=0): p1(p1), p2(p2), p3(p3) {
-        point aux = (p1-p3)^(p2-p3);
-        a = aux.x; b = aux.y; c = aux.z;
-        d = -a*p1.x - b*p1.y - c*p1.z;
-    }
-    plane(point p, point normal) {
-        normal = normilize(normal);
-        a = normal.x; b = normal.y; c = normal.z;
-        d = -(p*normal);
+    double area() const
+    {
+        return 2*PI*r*(r + h);
     }
 
-    // ax+by+cz+d = 0;
-    cod eval(point &p) {
-        return a*p.x + b*p.y + c*p.z + d;
+    double volume() const
+    {
+        return PI*r*r*h;
     }
 };
 
-cod dist(plane pl, point p) {
-    return fabs(pl.a*p.x + pl.b*p.y + pl.c*p.z + pl.d) / sqrt(pl.a*pl.a + pl.b*pl.b + pl.c*pl.c);
-}
+template<typename T>
+struct Cube {
+    T L;
 
-point rotate(point v, point k, ld theta) {
-    // Rotaciona o vetor v theta graus em torno do eixo k
-    // theta *= PI/180; // graus
-    return (
-        v*cos(theta)) +
-        ((k^v)*sin(theta)) +
-        (k*(k*v))*(1-cos(theta)
-    );
-}
+    double face_diagonal() const
+    {
+        return L*sqrt(2.0);
+    }
 
-// 3d line inter / mindistance
-cod d(point p1, point p2, point p3, point p4) {
-    return (p2-p1) * (p4-p3);
-}
-vector<point> inter3d(point p1, point p2, point p3, point p4) {
-    cod mua = ( d(p1, p3, p4, p3) * d(p4, p3, p2, p1) - d(p1, p3, p2, p1) * d(p4, p3, p4, p3) )
-           / ( d(p2, p1, p2, p1) * d(p4, p3, p4, p3) - d(p4, p3, p2, p1) * d(p4, p3, p2, p1) );
-    cod mub = ( d(p1, p3, p4, p3) + mua * d(p4, p3, p2, p1) ) / d(p4, p3, p4, p3);
-    point pa = p1 + (p2-p1) * mua;
-    point pb = p3 + (p4-p3) * mub;
-    if (pa == pb) return {pa};
-    return {};
-}
+    double space_diagonal() const
+    {
+        return L*sqrt(3.0);
+    }
+
+    double area() const
+    {
+        return 6.0*L*L;
+    }
+
+    double volume() const
+    {
+        return L*L*L;
+    }
+};
+
+template<typename T>
+struct Cone {
+    T r, H;
+
+    double volume() const
+    {
+        return PI*r*r*H/3.0;
+    }
+
+    double area() const
+    {
+        return PI*r*r + PI*r*sqrt(r*r + H*H);
+    }
+
+    // Volume do tronco do cone
+    double frustum(double rm, double h) const
+    {
+        return PI*h*(r*r + r*rm + rm*rm)/3.0;
+    }
+};
+
+template<typename T>
+struct Parallelepiped {
+    Vector3D<T> u, v, w;
+
+    double volume() const
+    {
+        return fabs(u.x*v.y*w.z + u.y*v.z*w.x + u.z*v.x*w.y 
+                - (u.x*v.z*.wy + u.y*v.x*w.z + u.z*v.y*w.x);
+    }
+
+    double volume2() const
+    {
+        double a = u.lenght();
+        double b = v.length();
+        double c = w.length();
+
+        double m = angle(u, v);
+        double n = angle(u, w);
+        double p = angle(v, w);
+
+        return a*b*c*sqrt(1 + 2*cos(m)*cos(n)*cos(p)
+            - cos(m)*cos(m) - cos(n)*cos(n) - cos(p)*cos(p));
+    }
+    
+    double volume3() const
+    {
+        return fabs(dot_product(u, cross_product(v, w)));
+    }
+
+    double area() const
+    {
+        double uv = cross_product(u, v).length();
+        double uw = cross_product(u, w).length();
+        double vw = cross_product(v, w).length();
+
+        return 2*(uv + uw + vw);
+    }
+};
