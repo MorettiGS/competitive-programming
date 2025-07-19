@@ -1,0 +1,44 @@
+/*
+ * Strings vazias, strings com um unico caractere ou strings resultantes da concatenação de um mesmo caractere c no inıcio e no fim de um pal´ındromo resulta em palíndromos.
+ * 
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * */
